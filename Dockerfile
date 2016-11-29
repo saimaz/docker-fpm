@@ -21,4 +21,9 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
     && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini
 
+# Install Xdebug
+RUN pecl install xdebug \
+ && printf "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/xdebug.so;xdebug.default_enable=0\nxdebug.remote_enable=1\nxdebug.remote_autostart=0\nxdebug.remote_port=9000\nxdebug.idekey=PHPSTORM\nxdebug.remote_host=10.254.254.254\nxdebug.remote_connect_back=0\nxdebug.profiler_enable=0" > $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini \
+ && docker-php-ext-enable xdebug
+
 WORKDIR "/var/www"
